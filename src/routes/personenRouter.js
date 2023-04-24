@@ -7,15 +7,17 @@ const {
     getPersonByID,
     updatePerson,
     insertPerson,
-    getPersons
+    getPersons,
+    getPersonID
 } = require("../controller/personenController")
 
 const personenRouter = express.Router();
 
 personenRouter.get('/all', getPersons)
+personenRouter.get('/', getPersonID)
 personenRouter.get('/id', getPersonByID)
 personenRouter.put('/update', doAuthMiddleware, updatePerson)
-personenRouter.post('/add', doAuthMiddleware, insertPerson)
+personenRouter.post('/add', insertPerson)
 
 module.exports = {
     personenRouter

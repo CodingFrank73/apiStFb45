@@ -14,6 +14,21 @@ const getPersons = async (req, res) => {
     }
 }
 
+const getPersonID = async (req, res) => {
+    try {
+        const vorname = req.query.vorname
+        const geburtsjahr = req.query.geburtsjahr;
+        const einrichtungId = req.query.einrichtungId
+
+        const result = await listAllByMultipleSearch(ref_param, lot_param, gtin_param)
+
+        res.status(200).json(result)
+
+    } catch (error) {
+        res.status(500).json({ err: error.message || "Unknown error while reading users" })
+    }
+}
+
 const getPersonByID = async (req, res) => {
 
     try {
@@ -56,9 +71,26 @@ const updatePerson = async (req, res) => {
 }
 
 const insertPerson = async (req, res) => {
-    //const { dogName, location, postalCode, password, email, gender, size, dateOfBirth } = req.body
-
-    // console.log('DATE OF BIRTH:', dateOfBirth);
+    const {
+        id,
+        einrichtungId,
+        aktenzeichen,
+        vorname,
+        nachname,
+        geburtsname,
+        geburtsjahr,
+        geburtstag,
+        geschlecht,
+        staatsangehoerigkeit,
+        staatsangehoerigkeitId,
+        beschaeftigungsart,
+        beschaeftigungsbeginn,
+        beschaeftigungsende,
+        fuehrungszeugnisLiegtVor,
+        fuehrungszeugnisMitEintrag,
+        ausgeschieden,
+        stichtag
+    } = req.body
 
     try {
         /* const foundUser = await daoPersonen.findByEmail(email)
@@ -67,9 +99,28 @@ const insertPerson = async (req, res) => {
             const errorMessage = "Account with this email already exists"
             throw new Error(errorMessage)
         } */
-        const personAttributes = req.body
 
-        const person = await createPerson(personAttributes);
+
+        const person = await createPerson({
+            id,
+            einrichtungId,
+            aktenzeichen,
+            vorname,
+            nachname,
+            geburtsname,
+            geburtsjahr,
+            geburtstag,
+            geschlecht,
+            staatsangehoerigkeit,
+            staatsangehoerigkeitId,
+            beschaeftigungsart,
+            beschaeftigungsbeginn,
+            beschaeftigungsende,
+            fuehrungszeugnisLiegtVor,
+            fuehrungszeugnisMitEintrag,
+            ausgeschieden,
+            stichtag
+        });
 
         const insertResult = await daoPersonen.insert(person);
 
@@ -81,7 +132,7 @@ const insertPerson = async (req, res) => {
             throw new Error("Registration failed")
         }
 
-        res.status(201).json({})
+        res.status(201).json({ "description": "Daten erstellt" })
 
     } catch (error) {
         console.log(error)
@@ -92,6 +143,7 @@ const insertPerson = async (req, res) => {
 
 module.exports = {
     getPersons,
+    getPersonID,
     getPersonByID,
     updatePerson,
     insertPerson

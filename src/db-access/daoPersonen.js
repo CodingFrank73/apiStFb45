@@ -11,7 +11,7 @@ async function findAll() {
 
 async function findById(id) {
     const db = await getDB();
-    const result = await db.collection(collectionName).findOne({ _id: new ObjectId(id) });
+    const result = await db.collection(collectionName).findOne({ id: Number(id) });
     return result
 }
 
