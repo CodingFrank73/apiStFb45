@@ -1,5 +1,5 @@
-const daoPersonen = require('./daoPersonen');
+const daoPersonal = require('./daoPersonal');
 
 module.exports = {
-    daoPersonen
+    daoPersonal
 }

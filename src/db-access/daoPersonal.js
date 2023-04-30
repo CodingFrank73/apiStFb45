@@ -1,11 +1,26 @@
 const { ObjectId } = require('mongodb');
 const { getDB } = require('./dbConnector');
 
-const collectionName = 'person';
+const collectionName = 'personal';
 
-async function findAll() {
+async function findId(vorname, nachname, geburtsjahr, einrichtungId, aktenzeichen) {
+
+    let filterConditions = {
+        'vorname': `${vorname}`,
+        'nachname': `${nachname}`,
+        'geburtsjahr': `${geburtsjahr}`,
+        'einrichtungId': `${einrichtungId}`,
+        'aktenzeichen': `${aktenzeichen}`
+    }
+
+    for (var i in filterConditions) {
+        if (filterConditions[i] == 'undefined') {
+            delete filterConditions[i]
+        }
+    }
+
     const db = await getDB();
-    const result = await db.collection(collectionName).find().toArray();
+    const result = await db.collection(collectionName).find(filterConditions).toArray();
     return result
 }
 
@@ -31,7 +46,7 @@ async function update(userId, updatedInfo) {
 }
 
 module.exports = {
-    findAll,
+    findId,
     findById,
     insert,
     update,

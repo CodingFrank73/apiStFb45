@@ -1,0 +1,2390 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "KiBiz Personalmodul API",
+        "description": "API fuer die Synchronisierung von Personaldaten",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/einrichtung": {
+            "get": {
+                "tags": [
+                    "einrichtung"
+                ],
+                "summary": "Liefert die ID einer Einrichtung anhand eines LJA- Aktenzeichens.",
+                "operationId": "searchEinrichtung",
+                "parameters": [
+                    {
+                        "name": "aktenzeichen",
+                        "in": "query",
+                        "description": "LJA-Aktenzeichen",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuchergebnisEinrichtung"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unzureichende Berechtigung",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Daten nicht gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fehlercode": {
+            "get": {
+                "tags": [
+                    "fehlercode"
+                ],
+                "summary": "Liefert die Liste der Fehlercodes im Personalmodul.",
+                "operationId": "getFehlercodes",
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Fehlercodes"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fehlercode/{modul}": {
+            "get": {
+                "tags": [
+                    "fehlercode"
+                ],
+                "summary": "Liefert die Liste der Fehlercodes für ein Modul.",
+                "operationId": "getFehlercodesModul",
+                "parameters": [
+                    {
+                        "name": "modul",
+                        "in": "path",
+                        "description": "Name des Moduls",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "name": "modul",
+                                    "in": "path",
+                                    "description": "Name des Moduls",
+                                    "required": true,
+                                    "schema": {
+                                        "type": "string"
+                                    },
+                                    "$ref": "#/components/schemas/Fehlercodes"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/jwt": {
+            "get": {
+                "tags": [
+                    "jwt"
+                ],
+                "summary": "Liefert ein JSON Web Token (JWT).",
+                "operationId": "getJwt",
+                "requestBody": {
+                    "description": "User Credentials im JSON-Format",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCredentials"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "JWT erstellt",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Jwt"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Anmeldedaten ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Interner Server Fehler",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System ist im Wartungsmodus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kind/id/{kindId}/einr/{einrichtungId}/jahr/{jahr}": {
+            "get": {
+                "tags": [
+                    "kind"
+                ],
+                "summary": "Liefert den Datensatz eines Kindes.",
+                "operationId": "getKind",
+                "parameters": [
+                    {
+                        "name": "kindId",
+                        "in": "path",
+                        "description": "ID des Kindes",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "einrichtungId",
+                        "in": "path",
+                        "description": "Id der Einrichtung",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "jahr",
+                        "in": "path",
+                        "description": "Kindergartenjahr",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Kind"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Kind-ID nicht vorhanden oder keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Kind-ID nicht gefunden"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "kind"
+                ],
+                "summary": "Aktualisieren eines vorhandenen Kindes.",
+                "operationId": "updateKind",
+                "parameters": [
+                    {
+                        "name": "kindId",
+                        "in": "path",
+                        "description": "ID des Kindes",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "einrichtungId",
+                        "in": "path",
+                        "description": "Id der Einrichtung",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "jahr",
+                        "in": "path",
+                        "description": "Kindergartenjahr",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Kinddaten im JSON-Format",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Kind"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Daten aktualisiert",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Kind"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validierung fehlgeschlagen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Messages"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Kind nicht vorhanden oder keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kind": {
+            "post": {
+                "tags": [
+                    "kind"
+                ],
+                "summary": "Anlegen eines neuen Kindes.",
+                "operationId": "createKind",
+                "requestBody": {
+                    "description": "Kinddaten im JSON-Format",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Kind"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Daten erstellt",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Kind"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validierung fehlgeschlagen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Messages"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/monatsdatenfreigabe": {
+            "post": {
+                "tags": [
+                    "monatsdatenfreigabe"
+                ],
+                "summary": "Freigabe der Monatsdaten für einen Monat",
+                "operationId": "freigabeMonatsdaten",
+                "requestBody": {
+                    "description": "Freigabedaten im JSON-Format",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Monatsdatenfreigabe"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Monatsdaten freigegeben",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Monatsdatenfreigabe"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validierung fehlgeschlagen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Messages"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/personal": {
+            "get": {
+                "tags": [
+                    "personal"
+                ],
+                "summary": "Stellt fest ob eine Person in KiBiz existiert und liefert ggf. die (KiBiz)-Personal-ID.",
+                "operationId": "searchPersonal",
+                "parameters": [
+                    {
+                        "name": "personalId",
+                        "in": "query",
+                        "description": "(KiBiz)-Personal-ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "aktenzeichen",
+                        "in": "query",
+                        "description": "Aktenzeichen/Personalnummer. Kann optional zur weiteren Eingrenzung angegeben werden.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "vorname",
+                        "in": "query",
+                        "description": "Vorname",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "nachname",
+                        "in": "query",
+                        "description": "Nachname. Kann optional zur weiteren Eingrenzung angegeben werden.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "geburtsjahr",
+                        "in": "query",
+                        "description": "Geburtsjahr",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "einrichtungId",
+                        "in": "query",
+                        "description": "ID der Einrichtung",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuchergebnisPersonal"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unzureichende Berechtigung",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Daten nicht gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "personal"
+                ],
+                "summary": "Versucht einen neuen Datensatz in den Personalbestand einer Einrichtung einzufügen. Beim Erstellen werden keine Ausbildungs- und Beschäftigungsinformationen gespeichert.",
+                "operationId": "createPersonal",
+                "requestBody": {
+                    "description": "Personaldaten im JSON-Format",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Personal"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Daten erstellt",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Personal"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validierung fehlgeschlagen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/personal/{id}": {
+            "get": {
+                "tags": [
+                    "personal"
+                ],
+                "summary": "Liefert einen Personaldatensatz.",
+                "operationId": "getPersonal",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID des Personals",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Personal"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Personal-ID nicht vorhanden oder keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "personal"
+                ],
+                "summary": "Aktualisiert einen vorhandenen Personaldatensatz.",
+                "operationId": "updatePersonal",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "type": "integer",
+                        "in": "path",
+                        "description": "ID des Personals",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Personaldaten im JSON-Format",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Personal"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Daten aktualisiert",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Personal"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validierung fehlgeschlagen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Personal-ID nicht vorhanden oder keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/personalhistorie/{scope}/{ids}": {
+            "get": {
+                "tags": [
+                    "personalhistorie"
+                ],
+                "summary": "Liefert die Freigabehistorien des Personals einer oder mehrerer Einrichtungen.",
+                "operationId": "getPersonalHistory",
+                "parameters": [
+                    {
+                        "name": "scope",
+                        "in": "path",
+                        "description": "personal oder einrichtung",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ids",
+                        "in": "path",
+                        "description": "Personal- oder Einrichtungs-IDs (kommagetrennt)",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PersonalHistorie"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "JWT ungültig",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "ID nicht vorhanden oder keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schluessel": {
+            "get": {
+                "tags": [
+                    "schluessel"
+                ],
+                "summary": "Liefert das Schlüsselverzeichnis.",
+                "operationId": "getSchluesselVz",
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Schluesselvz"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schluessel/{id}": {
+            "get": {
+                "tags": [
+                    "schluessel"
+                ],
+                "summary": "Liefert einen Schlüssel aus dem Schlüsselverzeichnis.",
+                "operationId": "getSchluessel",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID des Schlüssels",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Schluessel"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Datensatz nicht gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schluesselkombination": {
+            "get": {
+                "tags": [
+                    "schluesselkombination"
+                ],
+                "summary": "Liefert das Kombinationsverzeichnis.",
+                "operationId": "getKombinationen",
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Kombinationsverzeichnis"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Keine Zugriffsberechtigung für diese Aktion",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/staat": {
+            "get": {
+                "tags": [
+                    "staat"
+                ],
+                "summary": "Liefert die Liste der Staaten/Herkunftsländer.",
+                "operationId": "getStaaten",
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Staaten"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/staat/{id}": {
+            "get": {
+                "tags": [
+                    "staat"
+                ],
+                "summary": "Liefert einen Staat aus der Liste der Staaten/Herkunftsländer.",
+                "operationId": "getStaat",
+                "parameters": [
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daten gesendet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Staat"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Datensatz nicht gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/useraccess": {
+            "get": {
+                "tags": [
+                    "useraccess"
+                ],
+                "summary": "Prüft ob ein Benutzername Zugriff auf eine bestimmte Einrichtung-ID hat.",
+                "operationId": "checkUserAccess",
+                "requestBody": {
+                    "description": "Zu prüfende Daten",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserAccess"
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Daten sind gültig"
+                },
+                "403": {
+                    "description": "Anmeldedaten ungültig"
+                },
+                "404": {
+                    "description": "Daten sind ungültig"
+                },
+                "500": {
+                    "description": "Interner Server Fehler"
+                },
+                "503": {
+                    "description": "System ist im Wartungsmodus"
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Error": {
+                "properties": {
+                    "code": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Fehlercode": {
+                "properties": {
+                    "code": {
+                        "description": "Fehlercode.",
+                        "type": "integer"
+                    },
+                    "message": {
+                        "description": "Fehlermeldung.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Fehlercodes": {
+                "properties": {
+                    "codes": {
+                        "description": "Liste der Fehlercodes.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Fehlercode"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Jwt": {
+                "properties": {
+                    "jwt": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Kind": {
+                "required": [
+                    "kindId",
+                    "azLja",
+                    "bezeichnung",
+                    "geschlecht",
+                    "geburtsdatum",
+                    "gefluechtet"
+                ],
+                "properties": {
+                    "jahr": {
+                        "description": "Kindergartenjahr.",
+                        "type": "integer"
+                    },
+                    "kindId": {
+                        "description": "Innerhalb einer Einrichtung einzigartige Kind-ID.",
+                        "type": "string"
+                    },
+                    "azLja": {
+                        "description": "Aktenzeichen LJA.",
+                        "type": "string"
+                    },
+                    "einrichtungName": {
+                        "description": "Name der Einrichtung.",
+                        "type": "string"
+                    },
+                    "einrichtungId": {
+                        "description": "Id der Einrichtung.",
+                        "type": "integer"
+                    },
+                    "bezeichnung": {
+                        "description": "Bezeichnung des Kindes.",
+                        "type": "string"
+                    },
+                    "geschlecht": {
+                        "description": "Geschlecht (m: männlich, w: weiblich, d: divers).",
+                        "type": "string",
+                        "enum": [
+                            "m",
+                            "w",
+                            "d"
+                        ]
+                    },
+                    "geburtsdatum": {
+                        "description": "Geburtsdatum (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "wohnort": {
+                        "description": "Wohnort.",
+                        "type": "string"
+                    },
+                    "gefluechtet": {
+                        "description": "Geflüchtetes Kind.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nB",
+                            "nein"
+                        ]
+                    },
+                    "herkunftsland": {
+                        "description": "Herkunftsland.",
+                        "type": "string",
+                        "enum": [
+                            "Afghanistan",
+                            "Albanien",
+                            "Algerien",
+                            "Armenien",
+                            "Bulgarien",
+                            "Eritrea",
+                            "Guinea",
+                            "Irak",
+                            "Iran",
+                            "Kosovo",
+                            "Mazedonien",
+                            "Rumänien",
+                            "Russland",
+                            "Serbien",
+                            "Somalia",
+                            "Syrien",
+                            "Türkei",
+                            "weitere Herkunftsstaaten",
+                            "nicht bekannt"
+                        ]
+                    },
+                    "mittagsbetreuung": {
+                        "description": "Betreuung über Mittag.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "fremdsprachig": {
+                        "description": "Kind spricht vorrangig eine andere Sprache als Deutsch.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "gruppenform1": {
+                        "description": "Gruppenform August.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform2": {
+                        "description": "Gruppenform September.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform3": {
+                        "description": "Gruppenform Oktober.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform4": {
+                        "description": "Gruppenform November.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform5": {
+                        "description": "Gruppenform Dezember.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform6": {
+                        "description": "Gruppenform Januar.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform7": {
+                        "description": "Gruppenform Februar.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform8": {
+                        "description": "Gruppenform März.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform9": {
+                        "description": "Gruppenform April.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform10": {
+                        "description": "Gruppenform Mai.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform11": {
+                        "description": "Gruppenform Juni.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "gruppenform12": {
+                        "description": "Gruppenform Juli.",
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II",
+                            "III"
+                        ]
+                    },
+                    "betreuungszeit1": {
+                        "description": "Betreuungszeit August.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit2": {
+                        "description": "Betreuungszeit September.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit3": {
+                        "description": "Betreuungszeit Oktober.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit4": {
+                        "description": "Betreuungszeit November.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit5": {
+                        "description": "Betreuungszeit Dezember.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit6": {
+                        "description": "Betreuungszeit Januar.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit7": {
+                        "description": "Betreuungszeit Februar.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit8": {
+                        "description": "Betreuungszeit März.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit9": {
+                        "description": "Betreuungszeit April.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit10": {
+                        "description": "Betreuungszeit Mai.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit11": {
+                        "description": "Betreuungszeit Juni.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "betreuungszeit12": {
+                        "description": "Betreuungszeit Juli.",
+                        "type": "string",
+                        "enum": [
+                            "25",
+                            "35",
+                            "45"
+                        ]
+                    },
+                    "alterskategorie1": {
+                        "description": "Alterskategorie August.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie2": {
+                        "description": "Alterskategorie September.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie3": {
+                        "description": "Alterskategorie Oktober.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie4": {
+                        "description": "Alterskategorie November.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie5": {
+                        "description": "Alterskategorie Dezember.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie6": {
+                        "description": "Alterskategorie Januar.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie7": {
+                        "description": "Alterskategorie Februar.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie8": {
+                        "description": "Alterskategorie März.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie9": {
+                        "description": "Alterskategorie April.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie10": {
+                        "description": "Alterskategorie Mai.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie11": {
+                        "description": "Alterskategorie Juni.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "alterskategorie12": {
+                        "description": "Alterskategorie Juli.",
+                        "type": "string",
+                        "enum": [
+                            "U3",
+                            "Ü3",
+                            "Schulkind"
+                        ]
+                    },
+                    "behinderung1": {
+                        "description": "Kind mit anerkannter Behinderung - August.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung2": {
+                        "description": "Kind mit anerkannter Behinderung - September.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung3": {
+                        "description": "Kind mit anerkannter Behinderung - Oktober.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung4": {
+                        "description": "Kind mit anerkannter Behinderung - November.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung5": {
+                        "description": "Kind mit anerkannter Behinderung - Dezember.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung6": {
+                        "description": "Kind mit anerkannter Behinderung - Januar.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung7": {
+                        "description": "Kind mit anerkannter Behinderung - Februar.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung8": {
+                        "description": "Kind mit anerkannter Behinderung - März.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung9": {
+                        "description": "Kind mit anerkannter Behinderung - April.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung10": {
+                        "description": "Kind mit anerkannter Behinderung - Mai.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung11": {
+                        "description": "Kind mit anerkannter Behinderung - Juni.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "behinderung12": {
+                        "description": "Kind mit anerkannter Behinderung - Juli.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "Kombination": {
+                "properties": {
+                    "id": {
+                        "description": "ID.",
+                        "type": "integer"
+                    },
+                    "schluessel3Id": {
+                        "description": "ID des 3er-Schlüssels.",
+                        "type": "integer"
+                    },
+                    "schluessel4Id": {
+                        "description": "ID des 4er-Schlüssels.",
+                        "type": "integer"
+                    },
+                    "typ": {
+                        "description": "Typ der Kombination.",
+                        "type": "string"
+                    },
+                    "laufzeitBeginn": {
+                        "description": "Laufzeitbeginn (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "laufzeitEnde": {
+                        "description": "Laufzeitende (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "KombinationKey3": {
+                "properties": {
+                    "id": {
+                        "description": "ID.",
+                        "type": "integer"
+                    },
+                    "schluesselAId": {
+                        "description": "ID Schlüssel A.",
+                        "type": "integer"
+                    },
+                    "schluesselBId": {
+                        "description": "ID Schlüssel B.",
+                        "type": "integer"
+                    },
+                    "laufzeitBeginn": {
+                        "description": "Laufzeitbeginn (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "laufzeitEnde": {
+                        "description": "Laufzeitende (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Kombinationsverzeichnis": {
+                "properties": {
+                    "kombinationen": {
+                        "description": "Kombinationsmatrix für 3er-/4er- Schlüsselkombinationen.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Kombination"
+                        }
+                    },
+                    "kombinationenKey3": {
+                        "description": "Kombinationsmatrix für 3er-/3er- Schlüsselkombinationen.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KombinationKey3"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Message": {
+                "properties": {
+                    "code": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Messages": {
+                "properties": {
+                    "messages": {
+                        "description": "Liste der Fehler.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Message"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Monatsdatenfreigabe": {
+                "required": [
+                    "betriebNichtAufgenommen",
+                    "einrichtungId",
+                    "jahr",
+                    "monat"
+                ],
+                "properties": {
+                    "jahr": {
+                        "description": "Kindergartenjahr.",
+                        "type": "integer"
+                    },
+                    "monat": {
+                        "description": "Monat.",
+                        "type": "integer"
+                    },
+                    "einrichtungId": {
+                        "description": "Id der Einrichtung.",
+                        "type": "integer"
+                    },
+                    "betriebNichtAufgenommen": {
+                        "description": "Betrieb nicht aufgenommen.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Personal": {
+                "required": [
+                    "aktenzeichen",
+                    "vorname",
+                    "nachname",
+                    "geburtstag",
+                    "geschlecht",
+                    "staatsangehoerigkeitId",
+                    "beschaeftigungsart",
+                    "beschaeftigungsbeginn",
+                    "fuehrungszeugnisLiegtVor",
+                    "fuehrungszeugnisMitEintrag",
+                    "ausgeschieden",
+                    "ausbildung",
+                    "funktion"
+                ],
+                "properties": {
+                    "synchronisieren": {
+                        "description": "Stanardmäßig wird nur die Validierung der Daten durchgeführt. Damit die Daten synchronisiert werden muss dies auf \"ja\" gesetzt werden.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "id": {
+                        "description": "ID des Personals (KiBiz-Personal-ID).",
+                        "type": "integer"
+                    },
+                    "einrichtungId": {
+                        "description": "ID der Einrichtung.",
+                        "type": "integer"
+                    },
+                    "aktenzeichen": {
+                        "description": "Aktenzeichen/Kennziffer (vom Träger vergebene Personal-ID).",
+                        "type": "string"
+                    },
+                    "vorname": {
+                        "description": "Vorname.",
+                        "type": "string"
+                    },
+                    "nachname": {
+                        "description": "Nachname.",
+                        "type": "string"
+                    },
+                    "geburtsname": {
+                        "description": "Geburtsname.",
+                        "type": "string"
+                    },
+                    "geburtsjahr": {
+                        "description": "Geburtsjahr.",
+                        "type": "integer"
+                    },
+                    "geburtstag": {
+                        "description": "Geburtstag (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "geschlecht": {
+                        "description": "Geschlecht (m: männlich, w: weiblich, a: anderes).",
+                        "type": "string",
+                        "enum": [
+                            "m",
+                            "w",
+                            "a"
+                        ]
+                    },
+                    "staatsangehoerigkeit": {
+                        "description": "Staatsangehörigkeit. Wird automatisch gesetzt anhand der Staatsangehörigkeit-ID.",
+                        "type": "string"
+                    },
+                    "staatsangehoerigkeitId": {
+                        "description": "Staatsangehörigkeit ID.",
+                        "type": "integer"
+                    },
+                    "beschaeftigungsart": {
+                        "description": "Beschäftigungsart (v: Vollzeit, t: Teilzeit).",
+                        "type": "string",
+                        "enum": [
+                            "v",
+                            "t"
+                        ]
+                    },
+                    "beschaeftigungsbeginn": {
+                        "description": "Beschäftigungsbeginn (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "beschaeftigungsende": {
+                        "description": "Beschäftigungsende (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "fuehrungszeugnisLiegtVor": {
+                        "description": "Führungszeugnis liegt vor.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "fuehrungszeugnisMitEintrag": {
+                        "description": "Führungszeugnis mit Eintrag. Dieser Wert ist nur relevant, wenn für \"Führungszeugnis liegt vor\" \"ja\" angegeben ist.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "ausgeschieden": {
+                        "description": "Personal ist ausgeschieden.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "stichtag": {
+                        "description": "Stichtag (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "ausbildung": {
+                        "description": "Ausbildungsinformationen.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonalAusbildung"
+                        }
+                    },
+                    "funktion": {
+                        "description": "Beschäftigungsinformationen.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonalFunktion"
+                        }
+                    },
+                    "warnings": {
+                        "description": "Liste der Warnungen die bei der Validierung aufgetreten sind.\nWarnungen verhindern die Synchronisierung nicht.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Warnung"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PersonalAusbildung": {
+                "required": [
+                    "schluessel3Id",
+                    "gueltigVon",
+                    "gueltigBis",
+                    "unbefristet",
+                    "staatlichGeprueft",
+                    "staatlichAnerkannt",
+                    "ausbildungsnachweisGeprueft",
+                    "ausbildungAusland",
+                    "ausbildungAuslandGeprueft"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID.",
+                        "type": "integer"
+                    },
+                    "personalId": {
+                        "description": "ID des Personals.",
+                        "type": "integer"
+                    },
+                    "schluessel3": {
+                        "description": "Nummer des 3er-Schlüssels. Wird automatisch gesetzt anhand der Schlüssel-3-ID.",
+                        "type": "integer"
+                    },
+                    "schluessel3Id": {
+                        "description": "Schlüssel-3-ID.",
+                        "type": "integer"
+                    },
+                    "gueltigVon": {
+                        "description": "Gültig von (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "gueltigBis": {
+                        "description": "Gültig bis (Format: YYYY-MM-DD). Angabe des Datums, wenn im Feld \"unbefristet\" \"nein\" steht,\noder \"unbefristet\"wenn im Feld \"unbefristet\" \"ja\" steht.",
+                        "type": "string"
+                    },
+                    "unbefristet": {
+                        "description": "Tätigkeit unbefristet.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "abgeschlossenAm": {
+                        "description": "Ausbildung abgeschlossen am (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "staatlichGeprueft": {
+                        "description": "Staatlich geprueft.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "staatlichGeprueftAm": {
+                        "description": "Staatlich geprueft am (Format: YYYY-MM-DD). Erforderlich bei \"staatlich geprüft: ja\".",
+                        "type": "string"
+                    },
+                    "staatlichAnerkannt": {
+                        "description": "Staatlich anerkannt.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "ausbildungsnachweisGeprueft": {
+                        "description": "Ausbildungsnachweis geprueft. Wenn der Schlüssel 370 ausgewählt wurde, kann dies\n\"nein\" sein; ansonsten muss hier immer \"ja\" stehen.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "ausbildungAusland": {
+                        "description": "Ausbildung im Ausland.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "ausbildungAuslandAls": {
+                        "description": "Ausbildung im Ausland als.",
+                        "type": "string"
+                    },
+                    "ausbildungAuslandGeprueft": {
+                        "description": "Die Gleichwertigkeit der Ausbildung im Ausland wurde festgestellt. Wenn für\n\"Ausbildung im Ausland\" \"ja\" gewählt wurde, muss dies \"ja\" sein.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "PersonalFunktion": {
+                "required": [
+                    "schluessel4Id",
+                    "schluessel5Id",
+                    "gueltigBis",
+                    "unbefristet",
+                    "arbeitsstunden",
+                    "freistellungsstunden",
+                    "vorgaengerVorhanden"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID.",
+                        "type": "integer"
+                    },
+                    "personalId": {
+                        "description": "Personal-ID.",
+                        "type": "integer"
+                    },
+                    "schluessel4": {
+                        "description": "Nummer des 4er-Schlüssels. Wird automatisch gesetzt anhand der Schlüssel-4-ID.",
+                        "type": "integer"
+                    },
+                    "schluessel4Id": {
+                        "description": "Schlüssel-4-ID.",
+                        "type": "integer"
+                    },
+                    "schluessel5": {
+                        "description": "Nummer des 5er-Schlüssels. Wird automatisch gesetzt anhand der Schlüssel-5-ID.",
+                        "type": "integer"
+                    },
+                    "schluessel5Id": {
+                        "description": "Schlüssel-5-ID.",
+                        "type": "integer"
+                    },
+                    "personalunterlagen": {
+                        "description": "Personalunterlagen haben vorgelegen. Bei Auswahl der Schlüssel 400, 401, 402, 451\nmuss die Angabe \"ja\" sein. In allen anderen Fällen ist diese Angabe irrelevant.",
+                        "type": "string"
+                    },
+                    "taetigSeit": {
+                        "description": "Tätig seit (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "gueltigBis": {
+                        "description": "Gültig bis (Format: YYYY-MM-DD). Angabe des Datums, wenn im Feld \"unbefristet\" \"nein\" steht,\noder \"unbefristet\" wenn im Feld \"unbefristet\" \"ja\" steht.",
+                        "type": "string"
+                    },
+                    "unbefristet": {
+                        "description": "Tätigkeit unbefristet.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "arbeitsstunden": {
+                        "description": "Arbeitsstunden.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "freistellungsstunden": {
+                        "description": "Freistellungsstunden. Angabe erforderlich bei Schlüssel 402 und 452.\nBei Schlüssel 400 sind die Freistellungsstunden gleich den Arbeitsstunden.\nBei allen anderen Schlüsseln sind die Freistellungsstunden null.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "vorgaengerVorhanden": {
+                        "description": "Gibt es einen Vorgänger? Bei \"nein\" werden die Defaultwerte für alle anderen Angaben\nzum Vorgänger verwendet.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    },
+                    "vorgaengerVorname": {
+                        "description": "Vorname des Vorgängers.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "vorgaengerNachname": {
+                        "description": "Nachname des Vorgängers.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "vorgaengerGeburtsjahr": {
+                        "description": "Geburtsjahr des Vorgängers.",
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "vorgaengerNochTaetig": {
+                        "description": "Vorgänger noch tätig.",
+                        "type": "string",
+                        "default": "nein",
+                        "enum": [
+                            "ja",
+                            "abwesend",
+                            "nein"
+                        ]
+                    },
+                    "vorgaengerSchluessel4": {
+                        "description": "Nummer des 4er-Schlüssels des Vorgängers. Wird automatisch gesetzt.",
+                        "type": "integer"
+                    },
+                    "vorgaengerSchluessel4Id": {
+                        "description": "Vorgänger Schlüssel-4-ID. Erforderlich wenn 'vorgaengerNochTaetig' = 'ja'.",
+                        "type": "integer"
+                    },
+                    "vorgaengerBeschaeftigungsbeginn": {
+                        "description": "Beschäftigungsbeginn Vorgänger (Format: YYYY-MM-DD).\nErforderlich wenn 'vorgaengerNochTaetig' = 'ja'.",
+                        "type": "string"
+                    },
+                    "vorgaengerBeschaeftigungsende": {
+                        "description": "Beschäftigungsende Vorgänger (Format: YYYY-MM-DD).\nErforderlich wenn 'vorgaengerNochTaetig' = 'nein'.",
+                        "type": "string"
+                    },
+                    "vorgaengerAbwesendSeit": {
+                        "description": "Vorgänger abwesend seit (Format: YYYY-MM-DD).\nErforderlich wenn 'vorgaengerNochTaetig' = 'abwesend'.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PersonalHistorie": {
+                "properties": {
+                    "entries": {
+                        "description": "Liste der Einträge in der Historie.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PersonalHistorieEintrag"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PersonalHistorieEintrag": {
+                "properties": {
+                    "personalId": {
+                        "description": "ID des Personals.",
+                        "type": "integer"
+                    },
+                    "einrichtungId": {
+                        "description": "ID der Einrichtung.",
+                        "type": "integer"
+                    },
+                    "stichtag": {
+                        "description": "Stichtag der Freigabe.",
+                        "type": "string"
+                    },
+                    "freigabedatum": {
+                        "description": "Freigabedatum.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status der Meldung (Freigabe, Rückgabe).",
+                        "type": "string"
+                    },
+                    "statusFachlich": {
+                        "description": "Fachlicher Status (Neuanlage, Veränderung, Ausscheiden).",
+                        "type": "string"
+                    },
+                    "meldungArt": {
+                        "description": "Art der Meldung (pb = Personalbogen, fm = Formlose Meldung).",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Schluessel": {
+                "properties": {
+                    "schluesselId": {
+                        "description": "Schlüssel-ID.",
+                        "type": "integer"
+                    },
+                    "schluesselNummer": {
+                        "description": "Schlüssel-Nummer.",
+                        "type": "integer"
+                    },
+                    "schluesselTyp": {
+                        "description": "Schlüssel-Typ.",
+                        "type": "string"
+                    },
+                    "schluesselTypId": {
+                        "description": "ID des Schlüssel-Typs.",
+                        "type": "integer"
+                    },
+                    "gliederungId": {
+                        "description": "Id der Gliederung.",
+                        "type": "integer"
+                    },
+                    "gliederungText": {
+                        "description": "Gliederung.",
+                        "type": "string"
+                    },
+                    "beschreibung": {
+                        "description": "Beschreibung des Schlüssels.",
+                        "type": "string"
+                    },
+                    "laufzeitBeginn": {
+                        "description": "Laufzeitbeginn (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "laufzeitEnde": {
+                        "description": "Laufzeitende (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "staatlichGeprueftErforderlich": {
+                        "description": "Zeigt an ob bei diesem Schlüssel die Angabe \"staatlich geprüft\" in den Ausbildungsinformationen auf \"ja\" stehen muss.",
+                        "type": "integer"
+                    },
+                    "staatlichAnerkanntErforderlich": {
+                        "description": "Zeigt an ob bei diesem Schlüssel die Angabe\"staatlich anerkannt\" in den Ausbildungsinformationen auf \"ja\" stehen muss.",
+                        "type": "integer"
+                    },
+                    "reihenfolge": {
+                        "description": "Reihenfolge innerhalb des Schlüssel-Typs.",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Schluesselvz": {
+                "properties": {
+                    "schluesselVz": {
+                        "description": "Schluesselverzeichnis.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Schluessel"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Staat": {
+                "properties": {
+                    "id": {
+                        "description": "Staat-ID.",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name des Staats.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Staaten": {
+                "properties": {
+                    "staaten": {
+                        "description": "Liste der Staaten.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Staat"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SuchergebnisEinrichtung": {
+                "required": [
+                    "aktenzeichen"
+                ],
+                "properties": {
+                    "aktenzeichen": {
+                        "description": "Aktenzeichen LJA.",
+                        "type": "string"
+                    },
+                    "einrichtungId": {
+                        "description": "ID der Einrichtung.",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "SuchergebnisPersonal": {
+                "required": [
+                    "vorname",
+                    "geburtsjahr",
+                    "einrichtungId"
+                ],
+                "properties": {
+                    "personalId": {
+                        "description": "ID des Personals (KiBiz-Personal-ID).",
+                        "type": "integer"
+                    },
+                    "aktenzeichen": {
+                        "description": "Aktenzeichen/Personalnummer (Personal-ID).",
+                        "type": "string"
+                    },
+                    "vorname": {
+                        "description": "Vorname.",
+                        "type": "string"
+                    },
+                    "nachname": {
+                        "description": "Nachname.",
+                        "type": "string"
+                    },
+                    "geburtsjahr": {
+                        "description": "Geburtsjahr.",
+                        "type": "integer"
+                    },
+                    "einrichtungId": {
+                        "description": "ID der Einrichtung.",
+                        "type": "integer"
+                    },
+                    "aktenzeichenBekannt": {
+                        "description": "Zeigt an ob das Aktenzeichen innerhalb der Einrichtung bekannt ist.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein",
+                            "unbekannt"
+                        ]
+                    },
+                    "suchergebnis": {
+                        "description": "Ergebnismeldung der Suchanfrage.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SuchlaufErgebnis"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SuchlaufErgebnis": {
+                "properties": {
+                    "suchlauf": {
+                        "description": "Bezeichnung des Suchlaufs.",
+                        "type": "string",
+                        "enum": [
+                            "minimum",
+                            "nachname",
+                            "aktenzeichen",
+                            "beides"
+                        ]
+                    },
+                    "code": {
+                        "description": "Ergebnis-Code.",
+                        "type": "integer"
+                    },
+                    "relevant": {
+                        "description": "Zeigt an ob dieser Suchlauf zur Bestimmung des HTTP-Statuscodes verwendet wurde.",
+                        "type": "string",
+                        "enum": [
+                            "ja",
+                            "nein"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "UserAccess": {
+                "required": [
+                    "masterkey",
+                    "username",
+                    "einrichtungId"
+                ],
+                "properties": {
+                    "masterkey": {
+                        "description": "Master-Key.",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "Benutzername.",
+                        "type": "string"
+                    },
+                    "einrichtungId": {
+                        "description": "ID der Einrichtung.",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "UserCredentials": {
+                "required": [
+                    "masterkey",
+                    "kibizkey",
+                    "username"
+                ],
+                "properties": {
+                    "masterkey": {
+                        "description": "Master-Key.",
+                        "type": "string"
+                    },
+                    "kibizkey": {
+                        "description": "KiBiz-Key.",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "Benutzername.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Warnung": {
+                "properties": {
+                    "code": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "schluesselAId": {
+                        "type": "integer"
+                    },
+                    "schluesselBId": {
+                        "type": "integer"
+                    },
+                    "von": {
+                        "description": "Laufzeit von (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    },
+                    "bis": {
+                        "description": "Laufzeit bis (Format: YYYY-MM-DD).",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "description": "JWT als Query Parameter",
+                "name": "jwt",
+                "in": "query"
+            },
+            "jwtHeader": {
+                "type": "apiKey",
+                "description": "JWT als Header",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKey": [],
+            "jwtHeader": []
+        }
+    ]
+}

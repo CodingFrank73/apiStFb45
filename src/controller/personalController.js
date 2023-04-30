@@ -1,4 +1,4 @@
-const { daoPersonen } = require('../db-access')
+const { daoPersonal } = require('../db-access')
 const { createPerson } = require('../domain/person');
 
 
@@ -14,13 +14,15 @@ const getPersons = async (req, res) => {
     }
 }
 
-const getPersonID = async (req, res) => {
+const getPersonalID = async (req, res) => {
     try {
         const vorname = req.query.vorname
+        const nachname = req.query.nachname
         const geburtsjahr = req.query.geburtsjahr;
         const einrichtungId = req.query.einrichtungId
+        const aktenzeichen = req.query.aktenzeichen
 
-        const result = await listAllByMultipleSearch(ref_param, lot_param, gtin_param)
+        const result = await daoPersonal.findId(vorname, nachname, geburtsjahr, einrichtungId, aktenzeichen)
 
         res.status(200).json(result)
 
@@ -29,12 +31,13 @@ const getPersonID = async (req, res) => {
     }
 }
 
-const getPersonByID = async (req, res) => {
+const getPersonalByID = async (req, res) => {
 
     try {
+        //Prüfen ob jwt gültig
         const personId = req.query.id
         console.log(personId)
-        const result = await daoPersonen.findById(personId);
+        const result = await daoPersonal.findById(personId);
 
         if (!result) {
             throw new Error("Not profile exists...")
@@ -45,6 +48,8 @@ const getPersonByID = async (req, res) => {
         res.status(200).json(result);
 
     } catch (error) {
+        //401 JWT ungültig
+        //403 "Personal-ID nicht vorhanden oder keine Zugriffsberechtigung für diese Aktion"
         console.log(error)
         res.status(500).json({ err: { message: error ? error.message : "Unknown error while loading your profile." } })
     }
@@ -143,8 +148,8 @@ const insertPerson = async (req, res) => {
 
 module.exports = {
     getPersons,
-    getPersonID,
-    getPersonByID,
+    getPersonalID,
+    getPersonalByID,
     updatePerson,
     insertPerson
 }
