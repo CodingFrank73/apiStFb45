@@ -9,7 +9,7 @@ async function find(userName, kibizKey, masterKey) {
     const result = await db.collection(collectionName).findOne(
         { 
             $and: [
-                {username: userName },
+                {username: userName},
                 {kibizkey: kibizKey},
                 {masterkey: masterKey}
             ]
