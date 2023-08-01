@@ -1,5 +1,5 @@
 const { daoPersonal } = require('../db-access')
-const { createPerson } = require('../domain/person');
+const { createPerson, createNewPersonal } = require('../domain/person');
 
 
 const getPersons = async (req, res) => {
@@ -77,24 +77,18 @@ const updatePerson = async (req, res) => {
 
 const insertPerson = async (req, res) => {
     const {
-        id,
         einrichtungId,
         aktenzeichen,
         vorname,
         nachname,
         geburtsname,
-        geburtsjahr,
         geburtstag,
         geschlecht,
-        staatsangehoerigkeit,
         staatsangehoerigkeitId,
         beschaeftigungsart,
         beschaeftigungsbeginn,
-        beschaeftigungsende,
         fuehrungszeugnisLiegtVor,
-        fuehrungszeugnisMitEintrag,
-        ausgeschieden,
-        stichtag
+        fuehrungszeugnisMitEintrag
     } = req.body
 
     try {
@@ -105,39 +99,39 @@ const insertPerson = async (req, res) => {
             throw new Error(errorMessage)
         } */
 
+//MakeNewPersonal => erstelle ein neues Personalobject. Hierbei machte Prüfung ob alle benötigten Daten eingetragen sind.
+//Erstelle felder wie Staatangehörigkeit
 
-        const person = await createPerson({
-            id,
+        const personal = await createNewPersonal({
+            synchronisieren : "nein",
             einrichtungId,
             aktenzeichen,
             vorname,
             nachname,
             geburtsname,
-            geburtsjahr,
             geburtstag,
             geschlecht,
-            staatsangehoerigkeit,
             staatsangehoerigkeitId,
             beschaeftigungsart,
             beschaeftigungsbeginn,
-            beschaeftigungsende,
             fuehrungszeugnisLiegtVor,
-            fuehrungszeugnisMitEintrag,
-            ausgeschieden,
-            stichtag
+            fuehrungszeugnisMitEintrag
         });
 
-        const insertResult = await daoPersonen.insert(person);
-
-        const isRegSuccessfully =
-            insertResult.acknowledged === true &&
-            insertResult.insertedId;
-
-        if (!isRegSuccessfully) {
-            throw new Error("Registration failed")
+        if (personal.synchronisieren === "ja"){
+            res.status(201).json(personal)
+            // const insertResult = await daoPersonal.insert(personal);
         }
+        
+        // const isRegSuccessfully =
+        //     insertResult.acknowledged === true &&
+        //     insertResult.insertedId;
 
-        res.status(201).json({ "description": "Daten erstellt" })
+        // if (!isRegSuccessfully) {
+        //     throw new Error("Registration failed")
+        // }
+
+        // res.status(201).json({ "description": "Daten erstellt" })
 
     } catch (error) {
         console.log(error)
