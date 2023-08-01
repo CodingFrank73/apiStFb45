@@ -10,9 +10,11 @@ const {
     getPersonalID
 } = require("../controller/personalController")
 
+const { getToken } = require("../controller/authController")
+
 const apiRouter = express.Router();
 
-apiRouter.get('/jwt/', getPersonalID)
+apiRouter.get('/jwt/', getToken)
 apiRouter.get('/personal/', getPersonalID)
 apiRouter.get('/personal/id', getPersonalByID)
 
