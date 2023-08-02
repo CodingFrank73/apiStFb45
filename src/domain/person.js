@@ -63,21 +63,31 @@ function createNewPersonal({
     geburtsname,
     geburtstag,
     geschlecht,
+    staatsangehoerigkeit,
     staatsangehoerigkeitId,
     beschaeftigungsart,
     beschaeftigungsbeginn,
     fuehrungszeugnisLiegtVor = "nein",
-    fuehrungszeugnisMitEintrag = "nein"
+    fuehrungszeugnisMitEintrag = "nein",
+    ausgeschieden,
+    stichtag,
+    ausbildung = [],
+    funktion = [],
+    warnings = []
 }) 
 {
     try {
         if(typeof vorname !== "string" || vorname.trim().length === 0){
-            throw new Error("Vorname ist ein Pflichtfeld")
+            let err = new Error('Vorname ist ein Pflichtfeld');
+            err.status = 600
+            throw err
         }
     
         if(typeof nachname !== "string" || nachname.trim().length === 0){
             throw new Error("Vorname ist ein Pflichtfeld")
         }
+
+
     
         synchronisieren ="ja"
         
@@ -90,21 +100,23 @@ function createNewPersonal({
             geburtsname,
             geburtstag,
             geschlecht,
+            staatsangehoerigkeit,
             staatsangehoerigkeitId,
             beschaeftigungsart,
             beschaeftigungsbeginn,
             fuehrungszeugnisLiegtVor,
-            fuehrungszeugnisMitEintrag
-            // ausgeschieden,
-            // stichtag,
-            // ausbildung,
-            // funktion,
-            // warnings
+            fuehrungszeugnisMitEintrag,
+            ausgeschieden,
+            stichtag,
+            ausbildung,
+            funktion,
+            warnings
         }
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: error.message || "Unknown error while registering new user." })
+        return error
+        //console.log("Person.js: ",error)
+        //res.status(500).json({ error: error.message || "Unknown error while registering new user." })
     }
 
     
