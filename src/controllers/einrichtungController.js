@@ -1,6 +1,6 @@
 const { daoEinrichtung } = require('../db-access')
 
-const  getEinrichtungByLjaAz = async (req, res) => {
+const  detailsEinrichtungAction = async (req, res) => {
 
     try {
         //Prüfen ob jwt gültig
@@ -24,5 +24,5 @@ const  getEinrichtungByLjaAz = async (req, res) => {
 
 
 module.exports = {
-    getEinrichtungByLjaAz
+   detailsEinrichtungAction
 }

@@ -5,22 +5,28 @@ const { doAuthMiddleware } = require("../utils/auth-middleware");
 const {
     getPersonalByID,
     updatePerson,
-    insertPerson,
+    insertPersonalAction,
     getPersons,
     getPersonalID
-} = require("../controller/personalController")
+} = require("../controllers/personalController")
 
-const {
-    getEinrichtungByLjaAz
-} = require("../controller/einrichtungController")
+const { detailsEinrichtungAction } = require("../controllers/einrichtungController");
+const { indexStaatAction, detailsStaatAction} = require("../controllers/staatController");
+
+
 
 const apiRouter = express.Router();
 
 apiRouter.get('/jwt/', getPersonalID)
+
 apiRouter.get('/personal/', getPersonalID)
 apiRouter.get('/personal/id', getPersonalByID)
-apiRouter.post('/personal/', insertPerson)
-apiRouter.get('/einrichtung/', getEinrichtungByLjaAz)
+apiRouter.post('/personal/', insertPersonalAction)
+
+apiRouter.get('/einrichtung/', detailsEinrichtungAction)
+
+apiRouter.get('/staat/', indexStaatAction)
+apiRouter.get('/staat/:indkey', detailsStaatAction)
 
 module.exports = {
     apiRouter

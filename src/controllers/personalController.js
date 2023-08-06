@@ -1,4 +1,4 @@
-const { CLIENT_RENEG_LIMIT } = require('tls');
+//const { CLIENT_RENEG_LIMIT } = require('tls');
 const { daoPersonal } = require('../db-access');
 const { daoCommon } = require('../db-access');
 const { createPerson, createNewPersonal } = require('../domain/person');
@@ -78,7 +78,7 @@ const updatePerson = async (req, res) => {
     }
 }
 
-const insertPerson = async (req, res) => {
+const insertPersonalAction = async (req, res) => {
     const {
         einrichtungId,
         aktenzeichen,
@@ -95,18 +95,10 @@ const insertPerson = async (req, res) => {
     } = req.body
 
     try {
-        /* const foundUser = await daoPersonen.findByEmail(email)
-
-        if (foundUser) {
-            const errorMessage = "Account with this email already exists"
-            throw new Error(errorMessage)
-        } */
-
-//MakeNewPersonal => erstelle ein neues Personalobject. Hierbei machte Prüfung ob alle benötigten Daten eingetragen sind.
-//Erstelle felder wie Staatangehörigkeit
-
+        //Bezeichung der Staatsangehörigkeit anhand der StaatsangehörigkeitId ermitteln
         const staatsangehoerigkeit = await daoCommon.findStaatangehoerigkeitById(staatsangehoerigkeitId)
 
+        //Neues Personalobject erstellen
         const personal = await createNewPersonal({
             synchronisieren : "nein",
             einrichtungId,
@@ -124,7 +116,7 @@ const insertPerson = async (req, res) => {
             fuehrungszeugnisMitEintrag
         });
 
-
+        //Prüfen ob Warnungen vorliegen. Wenn JA zurück
         if (personal.synchronisieren !=="ja"){
             // let err = new Error(personal.message);
             // err.status = personal.status
@@ -171,5 +163,5 @@ module.exports = {
     getPersonalID,
     getPersonalByID,
     updatePerson,
-    insertPerson
+    insertPersonalAction
 }
