@@ -9,15 +9,15 @@ const {
     insertPerson,
     getPersons,
     getPersonalID
-} = require("../controller/personalController")
+} = require("../controllers/personalController")
 
 const webRouter = express.Router();
 
-webRouter.get('/all', getPersons)
-webRouter.get('/', getPersonalID)
-webRouter.get('/id', getPersonalByID)
-webRouter.put('/update', doAuthMiddleware, updatePerson)
-webRouter.post('/add', insertPerson)
+// webRouter.get('/all', getPersons)
+// webRouter.get('/', getPersonalID)
+// webRouter.get('/id', getPersonalByID)
+// webRouter.put('/update', doAuthMiddleware, updatePerson)
+// webRouter.post('/add', insertPerson)
 
 module.exports = {
     webRouter

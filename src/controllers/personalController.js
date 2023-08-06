@@ -1,5 +1,8 @@
-const { daoPersonal } = require('../db-access')
-const { createPerson } = require('../domain/person');
+//const { CLIENT_RENEG_LIMIT } = require('tls');
+const { daoPersonal } = require('../db-access');
+const { daoCommon } = require('../db-access');
+const { createPerson, createNewPersonal } = require('../domain/person');
+const { exit } = require('process');
 
 
 const getPersons = async (req, res) => {
@@ -75,72 +78,81 @@ const updatePerson = async (req, res) => {
     }
 }
 
-const insertPerson = async (req, res) => {
+const insertPersonalAction = async (req, res) => {
     const {
-        id,
         einrichtungId,
         aktenzeichen,
         vorname,
         nachname,
         geburtsname,
-        geburtsjahr,
         geburtstag,
         geschlecht,
-        staatsangehoerigkeit,
         staatsangehoerigkeitId,
         beschaeftigungsart,
         beschaeftigungsbeginn,
-        beschaeftigungsende,
         fuehrungszeugnisLiegtVor,
-        fuehrungszeugnisMitEintrag,
-        ausgeschieden,
-        stichtag
+        fuehrungszeugnisMitEintrag
     } = req.body
 
     try {
-        /* const foundUser = await daoPersonen.findByEmail(email)
+        //Bezeichung der Staatsangehörigkeit anhand der StaatsangehörigkeitId ermitteln
+        const staatsangehoerigkeit = await daoCommon.findStaatangehoerigkeitById(staatsangehoerigkeitId)
 
-        if (foundUser) {
-            const errorMessage = "Account with this email already exists"
-            throw new Error(errorMessage)
-        } */
-
-
-        const person = await createPerson({
-            id,
+        //Neues Personalobject erstellen
+        const personal = await createNewPersonal({
+            synchronisieren : "nein",
             einrichtungId,
             aktenzeichen,
             vorname,
             nachname,
             geburtsname,
-            geburtsjahr,
             geburtstag,
             geschlecht,
-            staatsangehoerigkeit,
+            staatsangehoerigkeit : staatsangehoerigkeit,
             staatsangehoerigkeitId,
             beschaeftigungsart,
             beschaeftigungsbeginn,
-            beschaeftigungsende,
             fuehrungszeugnisLiegtVor,
-            fuehrungszeugnisMitEintrag,
-            ausgeschieden,
-            stichtag
+            fuehrungszeugnisMitEintrag
         });
 
-        const insertResult = await daoPersonen.insert(person);
-
-        const isRegSuccessfully =
-            insertResult.acknowledged === true &&
-            insertResult.insertedId;
-
-        if (!isRegSuccessfully) {
-            throw new Error("Registration failed")
+        //Prüfen ob Warnungen vorliegen. Wenn JA zurück
+        if (personal.synchronisieren !=="ja"){
+            // let err = new Error(personal.message);
+            // err.status = personal.status
+            // throw err
+            res.status(personal.status).json(personal.message)
+            return
         }
 
-        res.status(201).json({ "description": "Daten erstellt" })
+        // const insertResult = await daoPersonal.insert(personal);
+
+        // const isRegSuccessfully =
+        //     insertResult.acknowledged === true &&
+        //     insertResult.insertedId;
+
+        // if (!isRegSuccessfully) {
+        //     throw new Error("Registration failed")
+        // }   
+
+         res.status(201).json(personal)
+
+        // if (personal.synchronisieren === "ja"){
+        //     res.status(201).json(personal)
+        //     const insertResult = await daoPersonal.insert(personal);
+        // }
+        
+        // const isRegSuccessfully =
+        //     insertResult.acknowledged === true &&
+        //     insertResult.insertedId;
+
+        // if (!isRegSuccessfully) {
+        //     throw new Error("Registration failed")
+        // }
+
+        // res.status(201).json({ "description": "Daten erstellt" })
 
     } catch (error) {
-        console.log(error)
         res.status(500).json({ error: error.message || "Unknown error while registering new user." })
     }
 
@@ -151,5 +163,5 @@ module.exports = {
     getPersonalID,
     getPersonalByID,
     updatePerson,
-    insertPerson
+    insertPersonalAction
 }
