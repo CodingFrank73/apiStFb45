@@ -1,20 +1,29 @@
-const { daoUser } = require('../db-access')
-const {createToken} = require('../utils/security')
+const { daoCommon } = require('../db-access')
+const { createToken, decode, isTokenExpired } = require('../utils/security')
 
 const getJWT = async (req, res) => {
 
     try {
         const { username, kibizkey, masterkey } = req.body
-       
-        const result = await daoUser.find(username, kibizkey, masterkey);
+        const test = process.env.Master_Key
+
+        if (masterkey !== process.env.Master_Key) {
+            res.status(403).send("Anmeldedaten ungültig")
+            return
+        };
+
+        const result = await daoCommon.findUser(kibizkey, username);
 
         if (!result) {
             throw new Error("Not profile exists...")
         }
 
-        const token = createToken()
+        const token = createToken(result, "access", Number(process.env.LIFETIME_TOKEN_ACCESS))
 
-        res.status(200).json(token);
+        const de = isTokenExpired(token)
+
+
+        res.status(201).json(token);
 
     } catch (error) {
         //401 JWT ungültig
@@ -24,6 +33,6 @@ const getJWT = async (req, res) => {
     }
 }
 
-module.exports={
+module.exports = {
     getJWT
 }

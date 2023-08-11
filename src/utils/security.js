@@ -16,6 +16,25 @@ function createToken(user, type = "access", lifetimeInSeconds = Number(process.e
     return token
 }
 
+function isTokenExpired(token) {
+    const payload = jwt.verify(token, process.env.JWT_SECRET)
+
+    if (payload.exp > Math.floor(Date.now() / 1000)) {
+        console.log(Math.floor(Date.now() / 1000));
+        console.log(payload.exp)
+    }
+}
+
+function decode(token) {
+    const d = jwt.verify(token, process.env.JWT_SECRET)
+    console.log(d.exp);
+    return d
+
+}
+
+
 module.exports = {
-    createToken
+    createToken,
+    isTokenExpired,
+    decode
 }

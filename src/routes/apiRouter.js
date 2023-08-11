@@ -12,14 +12,11 @@ const {
 
 const { detailsEinrichtungAction } = require("../controllers/einrichtungController");
 const { indexStaatAction, detailsStaatAction } = require("../controllers/staatController");
-
-
-
-const { getToken } = require("../controller/authController")
+const { getJWT } = require("../controllers/jwtController")
 
 const apiRouter = express.Router();
 
-apiRouter.get('/jwt/', getPersonalID)
+apiRouter.get('/jwt/', getJWT)
 apiRouter.get('/personal/', getPersonalID)
 apiRouter.get('/personal/id', getPersonalByID)
 apiRouter.post('/personal/', insertPersonalAction)

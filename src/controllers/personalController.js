@@ -95,12 +95,16 @@ const insertPersonalAction = async (req, res) => {
     } = req.body
 
     try {
+        //const userId = req.userClaims.exp;
+        console.log("hallo");
+        //console.log(req.userClaims.sub);
+
         //Bezeichung der Staatsangehörigkeit anhand der StaatsangehörigkeitId ermitteln
         const staatsangehoerigkeit = await daoCommon.findStaatangehoerigkeitById(staatsangehoerigkeitId)
 
         //Neues Personalobject erstellen
         const personal = await createNewPersonal({
-            synchronisieren : "nein",
+            synchronisieren: "nein",
             einrichtungId,
             aktenzeichen,
             vorname,
@@ -108,7 +112,7 @@ const insertPersonalAction = async (req, res) => {
             geburtsname,
             geburtstag,
             geschlecht,
-            staatsangehoerigkeit : staatsangehoerigkeit,
+            staatsangehoerigkeit: staatsangehoerigkeit,
             staatsangehoerigkeitId,
             beschaeftigungsart,
             beschaeftigungsbeginn,
@@ -117,7 +121,7 @@ const insertPersonalAction = async (req, res) => {
         });
 
         //Prüfen ob Warnungen vorliegen. Wenn JA zurück
-        if (personal.synchronisieren !=="ja"){
+        if (personal.synchronisieren !== "ja") {
             // let err = new Error(personal.message);
             // err.status = personal.status
             // throw err
@@ -135,13 +139,13 @@ const insertPersonalAction = async (req, res) => {
         //     throw new Error("Registration failed")
         // }   
 
-         res.status(201).json(personal)
+        res.status(201).json(personal)
 
         // if (personal.synchronisieren === "ja"){
         //     res.status(201).json(personal)
         //     const insertResult = await daoPersonal.insert(personal);
         // }
-        
+
         // const isRegSuccessfully =
         //     insertResult.acknowledged === true &&
         //     insertResult.insertedId;

@@ -8,13 +8,27 @@ async function findStaat() {
 }
 
 async function findStaatByIndKey(indkey) {
-    console.log (indkey)
     const db = await getDB();
-    const result = await db.collection("staatsangehoerigkeit").findOne({indkey : Number(indkey)}, {projection: {_id:0, keybez:1}})
+    const result = await db.collection("staatsangehoerigkeit").findOne({ indkey: Number(indkey) }, { projection: { _id: 0, keybez: 1 } })
+    return result
+}
+
+async function findUser(kibizKey, userName) {
+
+    const db = await getDB();
+    const result = await db.collection("user").findOne(
+        {
+            $and: [
+                { kibizkey: kibizKey },
+                { username: userName }
+            ]
+        }
+    );
     return result
 }
 
 module.exports = {
     findStaat,
-    findStaatByIndKey
+    findStaatByIndKey,
+    findUser
 }
