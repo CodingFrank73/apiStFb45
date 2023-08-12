@@ -3,6 +3,7 @@ const { daoCommon } = require('../db-access')
 const indexStaatAction = async(req, res) =>{
 
     try {
+        console.log("Hallo")
         const result = await daoCommon.findStaat();
         res.status(200).json(result);
 
