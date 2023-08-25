@@ -30,9 +30,9 @@ async function findById(id) {
     return result
 }
 
-async function insert(person) {
+async function insert(personal) {
     const db = await getDB();
-    const result = await db.collection(collectionName).insertOne(person);
+    const result = await db.collection(collectionName).insertOne(personal);
     return result
 }
 

@@ -1,9 +1,6 @@
-//const { CLIENT_RENEG_LIMIT } = require('tls');
-const { daoPersonal } = require('../db-access');
-const { daoCommon } = require('../db-access');
-const { createPerson, createNewPersonal } = require('../domain/person');
-const { exit } = require('process');
 
+const { daoPersonal } = require('../db-access');
+const { createPerson, createNewPersonal } = require('../domain/person');
 
 const getPersons = async (req, res) => {
 
@@ -79,46 +76,11 @@ const updatePerson = async (req, res) => {
 }
 
 const insertPersonalAction = async (req, res) => {
-    const {
-        einrichtungId,
-        aktenzeichen,
-        vorname,
-        nachname,
-        geburtsname,
-        geburtstag,
-        geschlecht,
-        staatsangehoerigkeitId,
-        beschaeftigungsart,
-        beschaeftigungsbeginn,
-        fuehrungszeugnisLiegtVor,
-        fuehrungszeugnisMitEintrag
-    } = req.body
+    console.log("Function: insertPersonalAction");
 
     try {
-        //const userId = req.userClaims.exp;
-        console.log("hallo");
-        //console.log(req.userClaims.sub);
-
-        //Bezeichung der Staatsangehörigkeit anhand der StaatsangehörigkeitId ermitteln
-        const staatsangehoerigkeit = await daoCommon.findStaatangehoerigkeitById(staatsangehoerigkeitId)
-
         //Neues Personalobject erstellen
-        const personal = await createNewPersonal({
-            synchronisieren: "nein",
-            einrichtungId,
-            aktenzeichen,
-            vorname,
-            nachname,
-            geburtsname,
-            geburtstag,
-            geschlecht,
-            staatsangehoerigkeit: staatsangehoerigkeit,
-            staatsangehoerigkeitId,
-            beschaeftigungsart,
-            beschaeftigungsbeginn,
-            fuehrungszeugnisLiegtVor,
-            fuehrungszeugnisMitEintrag
-        });
+        const personal = await createNewPersonal(req.body);
 
         //Prüfen ob Warnungen vorliegen. Wenn JA zurück
         if (personal.synchronisieren !== "ja") {
@@ -128,31 +90,11 @@ const insertPersonalAction = async (req, res) => {
             res.status(personal.status).json(personal.message)
             return
         }
-
-        // const insertResult = await daoPersonal.insert(personal);
-
-        // const isRegSuccessfully =
-        //     insertResult.acknowledged === true &&
-        //     insertResult.insertedId;
-
         // if (!isRegSuccessfully) {
         //     throw new Error("Registration failed")
         // }   
 
         res.status(201).json(personal)
-
-        // if (personal.synchronisieren === "ja"){
-        //     res.status(201).json(personal)
-        //     const insertResult = await daoPersonal.insert(personal);
-        // }
-
-        // const isRegSuccessfully =
-        //     insertResult.acknowledged === true &&
-        //     insertResult.insertedId;
-
-        // if (!isRegSuccessfully) {
-        //     throw new Error("Registration failed")
-        // }
 
         // res.status(201).json({ "description": "Daten erstellt" })
 

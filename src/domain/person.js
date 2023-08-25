@@ -1,4 +1,6 @@
 
+const { daoCommon } = require('../db-access');
+
 function createPerson({
     _id,
     id,
@@ -55,42 +57,46 @@ function createPerson({
     }
 }
 
-function createNewPersonal({
-    einrichtungId,
-    aktenzeichen,
-    vorname,
-    nachname,
-    geburtsname,
-    geburtstag,
-    geschlecht,
-    staatsangehoerigkeit,
-    staatsangehoerigkeitId,
-    beschaeftigungsart,
-    beschaeftigungsbeginn,
-    fuehrungszeugnisLiegtVor = "nein",
-    fuehrungszeugnisMitEintrag = "nein",
-    ausgeschieden,
-    stichtag,
-    ausbildung = [],
-    funktion = [],
-    warnings = []
-}) 
-{
+async function createNewPersonal(personalItems) {
+    const {
+        synchronisieren,
+        einrichtungId,
+        aktenzeichen,
+        vorname,
+        nachname,
+        geburtsname,
+        geburtstag,
+        geschlecht,
+        staatsangehoerigkeitId,
+        beschaeftigungsart,
+        beschaeftigungsbeginn,
+        fuehrungszeugnisLiegtVor = "nein",
+        fuehrungszeugnisMitEintrag = "nein",
+        ausgeschieden = "nein",
+        stichtag,
+        ausbildung = [],
+        funktion = [],
+        warnings = []
+    } = personalItems
+
     try {
-        if(typeof vorname !== "string" || vorname.trim().length === 0){
+        if (typeof vorname !== "string" || vorname.trim().length === 0) {
             let err = new Error('Vorname ist ein Pflichtfeld');
             err.status = 600
             throw err
         }
-    
-        if(typeof nachname !== "string" || nachname.trim().length === 0){
-            throw new Error("Vorname ist ein Pflichtfeld")
+
+        if (typeof nachname !== "string" || nachname.trim().length === 0) {
+            let err = new Error("Nachname ist ein Pflichtfeld")
+            err.status = 600
+            throw err
         }
 
+        //Bezeichung der Staatsangehörigkeit anhand der StaatsangehörigkeitId ermitteln
+        const objStaatsangehoerigkeit = await daoCommon.findStaatByIndKey(staatsangehoerigkeitId)
+        const { keybez } = objStaatsangehoerigkeit
+        const staatsangehoerigkeit = keybez
 
-    
-        synchronisieren ="ja"
-        
         return {
             synchronisieren,
             einrichtungId,
@@ -114,12 +120,12 @@ function createNewPersonal({
         }
 
     } catch (error) {
-        return error
+        //return error
         //console.log("Person.js: ",error)
-        //res.status(500).json({ error: error.message || "Unknown error while registering new user." })
+        res.status(500).json({ error: error.message || "Unknown error while registering new user." })
     }
 
-    
+
 }
 
 

@@ -1,6 +1,4 @@
 const express = require("express");
-const { body } = require("express-validator");
-const { doAuthMiddleware } = require("../utils/auth-middleware");
 
 const {
     getPersonalByID,
@@ -17,7 +15,7 @@ const { getJWT } = require("../controllers/jwtController")
 const apiRouter = express.Router();
 
 apiRouter.get('/jwt/', getJWT)
-apiRouter.get('/personal/', getPersonalID)
+apiRouter.get('/personal', getPersonalID)
 apiRouter.get('/personal/id', getPersonalByID)
 apiRouter.post('/personal/', insertPersonalAction)
 
