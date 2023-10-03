@@ -30,6 +30,13 @@ async function findById(id) {
     return result
 }
 
+async function findByObjectId(id){
+    const db = await getDB();
+    const result = await db.collection(collectionName).findOne({ _id: new ObjectId(id) });
+    console.log(result)
+    return result
+}
+
 async function insert(personal) {
     const db = await getDB();
     const result = await db.collection(collectionName).insertOne(personal);
@@ -48,6 +55,7 @@ async function update(userId, updatedInfo) {
 module.exports = {
     findId,
     findById,
+    findByObjectId,
     insert,
     update,
 }

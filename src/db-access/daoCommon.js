@@ -10,7 +10,7 @@ async function findStaat() {
 async function findStaatByIndKey(indkey) {
     const db = await getDB();
     const result = await db.collection("staatsangehoerigkeit").findOne({ indkey: Number(indkey) }, { projection: { _id: 0, keybez: 1 } })
-    return result
+    return result.keybez
 }
 
 async function findUser(kibizKey, userName) {

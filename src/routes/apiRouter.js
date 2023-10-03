@@ -14,6 +14,7 @@ const { getJWT } = require("../controllers/jwtController")
 
 const apiRouter = express.Router();
 
+
 apiRouter.get('/jwt/', getJWT)
 apiRouter.get('/personal', getPersonalID)
 apiRouter.get('/personal/id', getPersonalByID)

@@ -4,8 +4,7 @@ const { createToken, decode, isTokenExpired } = require('../utils/security')
 const getJWT = async (req, res) => {
 
     try {
-        const { username, kibizkey, masterkey } = req.body
-        const test = process.env.Master_Key
+        const { username, kibizkey, masterkey } = req.body      
 
         if (masterkey !== process.env.Master_Key) {
             res.status(403).send("Anmeldedaten ungültig")
@@ -19,9 +18,6 @@ const getJWT = async (req, res) => {
         }
 
         const token = createToken(result, "access", Number(process.env.LIFETIME_TOKEN_ACCESS))
-
-        const de = isTokenExpired(token)
-
 
         res.status(201).json(token);
 

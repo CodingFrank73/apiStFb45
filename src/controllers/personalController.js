@@ -1,6 +1,7 @@
 
-const { daoPersonal } = require('../db-access');
-const { createPerson, createNewPersonal } = require('../domain/person');
+const { daoPersonal, daoCommon } = require('../db-access');
+const { validateNewPersonal } = require('../utils/validate');
+const { createNewPersonal } = require('../domain/person');
 
 const getPersons = async (req, res) => {
 
@@ -76,27 +77,75 @@ const updatePerson = async (req, res) => {
 }
 
 const insertPersonalAction = async (req, res) => {
-    console.log("Function: insertPersonalAction");
+    ;console.log("Function: insertPersonalAction");
+
+    const {
+        synchronisieren,
+        einrichtungId,
+        aktenzeichen,
+        vorname,
+        nachname,
+        geburtsname,
+        geburtstag,
+        geschlecht,
+        staatsangehoerigkeitId,
+        beschaeftigungsart,
+        beschaeftigungsbeginn,
+        fuehrungszeugnisLiegtVor,
+        fuehrungszeugnisMitEintrag
+        } = req.body
 
     try {
-        //Neues Personalobject erstellen
-        const personal = await createNewPersonal(req.body);
+        //Vorprüfung: Im ersten Schritt, d.h. wenn die Eigenschaft 'synchronisieren' === 'nein' ist.
+        //Prüfe ob die im Body übermittelten Werte valide sind.
+        //Wenn NEIN gebe einer Validierungfehler, ansonsten ein Ok als Response zurück, und beende Function.
+        if (synchronisieren !=="ja"){
+            const isPersonalValid = await validateNewPersonal(req.body)
 
-        //Prüfen ob Warnungen vorliegen. Wenn JA zurück
-        if (personal.synchronisieren !== "ja") {
-            // let err = new Error(personal.message);
-            // err.status = personal.status
-            // throw err
-            res.status(personal.status).json(personal.message)
-            return
+            if (!isPersonalValid) {
+                res.status(400).json({code: 3})
+                return
+            } else {
+                res.status(200).json({})
+                return
+            }
         }
-        // if (!isRegSuccessfully) {
-        //     throw new Error("Registration failed")
-        // }   
 
-        res.status(201).json(personal)
+        const staatsangehoerigkeit = await daoCommon.findStaatByIndKey(staatsangehoerigkeitId)
 
-        // res.status(201).json({ "description": "Daten erstellt" })
+        //Neues Personal Object erstellen
+        const personal = await createNewPersonal({
+            einrichtungId,
+            aktenzeichen,
+            vorname,
+            nachname,
+            geburtsname,
+            geburtstag,
+            geschlecht,
+            staatsangehoerigkeit,
+            staatsangehoerigkeitId,
+            beschaeftigungsart,
+            beschaeftigungsbeginn,
+            fuehrungszeugnisLiegtVor,
+            fuehrungszeugnisMitEintrag
+        });
+
+        //Speichern des zuvor erstellten Personal Objects
+        const result = await daoPersonal.insert(personal)
+
+        //Prüfen ob das speichern erfolgreich war
+        const isInsSuccessfully = result.acknowledged === true && result.insertedId
+
+        //Wenn das speichern fehlgeschlagen ist, werfe eine Fehler und beende die Function
+        if (!isInsSuccessfully) {
+            throw new Error("Neues Personal konnte nicht gespeichert werden")
+        }   
+
+        //Speichern war erfolgreich, lade das soeben erstelle Personal Object
+        //und gebe es als Response zurück
+        const newPersonal = await daoPersonal.findByObjectId(result.insertedId)
+
+        res.status(201).json(newPersonal)
 
     } catch (error) {
         res.status(500).json({ error: error.message || "Unknown error while registering new user." })
