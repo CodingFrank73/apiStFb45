@@ -103,10 +103,10 @@ const insertPersonalAction = async (req, res) => {
             const isPersonalValid = await validateNewPersonal(req.body)
 
             if (!isPersonalValid) {
-                res.status(400).json({code: 3})
+                res.status(400).json({description: "Validierung fehlgeschlagen", content:{code: 3}})
                 return
             } else {
-                res.status(200).json({})
+                res.status(200).json({description: "OK"})
                 return
             }
         }
@@ -145,7 +145,7 @@ const insertPersonalAction = async (req, res) => {
         //und gebe es als Response zurück
         const newPersonal = await daoPersonal.findByObjectId(result.insertedId)
 
-        res.status(201).json(newPersonal)
+        res.status(201).json({discription : "Daten erstellt", content: newPersonal})
 
     } catch (error) {
         res.status(500).json({ error: error.message || "Unknown error while registering new user." })

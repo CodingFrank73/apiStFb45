@@ -27,10 +27,6 @@ function validateNewPersonal(personalObj){
             return isValid = false
         }
 
-        if(typeof geburtsname !== "string" || geburtsname.trim().length === 0){
-            return isValid = false
-        }
-
         if(typeof geburtstag !== "string" || geburtstag.trim().length === 0){
             return isValid = false
         }

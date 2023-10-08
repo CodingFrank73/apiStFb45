@@ -24,11 +24,6 @@ function createPerson({
     warnings = []
 }) {
 
-    //Pflichtfelder prüfen
-    /* if (typeof vorname !== "string" || vorname.trim().length === 0) {
-        throw new Error("vorname is required")
-    } */
-
     return {
         _id,
         id,
@@ -76,9 +71,6 @@ function createNewPersonal({
     warnings = []
 }) {
     try {
-       
-
-        
         return {
             einrichtungId,
             aktenzeichen,
@@ -108,7 +100,6 @@ function createNewPersonal({
 
     
 }
-
 
 module.exports = {
     createPerson,
