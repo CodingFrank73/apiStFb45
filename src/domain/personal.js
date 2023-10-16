@@ -1,56 +1,7 @@
 
-function createPerson({
-    _id,
-    id,
-    einrichtungId,
-    aktenzeichen,
-    vorname,
-    nachname,
-    geburtsname,
-    geburtsjahr,
-    geburtstag,
-    geschlecht,
-    staatsangehoerigkeit,
-    staatsangehoerigkeitId,
-    beschaeftigungsart,
-    beschaeftigungsbeginn,
-    beschaeftigungsende,
-    fuehrungszeugnisLiegtVor,
-    fuehrungszeugnisMitEintrag,
-    ausgeschieden,
-    stichtag,
-    ausbildung = [],
-    funktion = [],
-    warnings = []
-}) {
+const { daoCommon } = require('../db-access');
 
-    return {
-        _id,
-        id,
-        einrichtungId,
-        aktenzeichen,
-        vorname,
-        nachname,
-        geburtsname,
-        geburtsjahr,
-        geburtstag,
-        geschlecht,
-        staatsangehoerigkeit,
-        staatsangehoerigkeitId,
-        beschaeftigungsart,
-        beschaeftigungsbeginn,
-        beschaeftigungsende,
-        fuehrungszeugnisLiegtVor,
-        fuehrungszeugnisMitEintrag,
-        ausgeschieden,
-        stichtag,
-        ausbildung,
-        funktion,
-        warnings
-    }
-}
-
-function createNewPersonal({
+async function createNewPersonal({
     einrichtungId,
     aktenzeichen,
     vorname,
@@ -58,7 +9,6 @@ function createNewPersonal({
     geburtsname,
     geburtstag,
     geschlecht,
-    staatsangehoerigkeit,
     staatsangehoerigkeitId,
     beschaeftigungsart,
     beschaeftigungsbeginn,
@@ -71,6 +21,8 @@ function createNewPersonal({
     warnings = []
 }) {
     try {
+        const staatsangehoerigkeit = await daoCommon.findStaatByIndKey(staatsangehoerigkeitId)
+
         return {
             einrichtungId,
             aktenzeichen,
@@ -102,6 +54,5 @@ function createNewPersonal({
 }
 
 module.exports = {
-    createPerson,
     createNewPersonal
 }

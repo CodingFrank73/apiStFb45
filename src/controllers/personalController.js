@@ -1,7 +1,7 @@
 
 const { daoPersonal, daoCommon } = require('../db-access');
 const { validateNewPersonal } = require('../utils/validate');
-const { createNewPersonal } = require('../domain/person');
+const { createNewPersonal } = require('../domain/personal');
 
 const getPersons = async (req, res) => {
 
@@ -77,8 +77,6 @@ const updatePerson = async (req, res) => {
 }
 
 const insertPersonalAction = async (req, res) => {
-    ;console.log("Function: insertPersonalAction");
-
     const {
         synchronisieren,
         einrichtungId,
@@ -96,24 +94,7 @@ const insertPersonalAction = async (req, res) => {
         } = req.body
 
     try {
-        //Vorprüfung: Im ersten Schritt, d.h. wenn die Eigenschaft 'synchronisieren' === 'nein' ist.
-        //Prüfe ob die im Body übermittelten Werte valide sind.
-        //Wenn NEIN gebe einer Validierungfehler, ansonsten ein Ok als Response zurück, und beende Function.
-        if (synchronisieren !=="ja"){
-            const isPersonalValid = await validateNewPersonal(req.body)
-
-            if (!isPersonalValid) {
-                res.status(400).json({description: "Validierung fehlgeschlagen", content:{code: 3}})
-                return
-            } else {
-                res.status(200).json({description: "OK"})
-                return
-            }
-        }
-
-        const staatsangehoerigkeit = await daoCommon.findStaatByIndKey(staatsangehoerigkeitId)
-
-        //Neues Personal Object erstellen
+        //Neues Personal Object erstellen        
         const personal = await createNewPersonal({
             einrichtungId,
             aktenzeichen,
@@ -122,13 +103,59 @@ const insertPersonalAction = async (req, res) => {
             geburtsname,
             geburtstag,
             geschlecht,
-            staatsangehoerigkeit,
             staatsangehoerigkeitId,
             beschaeftigungsart,
             beschaeftigungsbeginn,
             fuehrungszeugnisLiegtVor,
             fuehrungszeugnisMitEintrag
         });
+
+
+        //Vorprüfung: Im ersten Schritt, d.h. wenn die Eigenschaft 'synchronisieren' === 'nein' ist.
+        //Prüfe ob die im Body übermittelten Werte valide sind.
+        //Wenn NEIN gebe einer Validierungfehler, ansonsten ein Ok als Response zurück, und beende Function.
+
+        if (synchronisieren !=="ja"){
+
+            console.log(req.headers.authorization)
+
+           //Ist JWt gültig. Wenn Nein beende sofort mit Status 401
+            // const tokenPayload = req.session.
+
+
+            
+            //Prüfe ob Validierungsfehler vorliegen
+            const personalErrorObj = await validateNewPersonal(personal)
+
+            //Wenn Fehler vorliegen gebe das ErrorObject der Validerung zurück
+            if (personalErrorObj.hasOwnProperty('error')){
+                res.status(400).json({
+                    "description" : "Validierung fehlgeschlagen", 
+                    "content" :{
+                        "application/json" : {
+                            "schema" : {
+                                "$ref" : personalErrorObj.error
+                            }
+                        }
+                    }})
+                return
+            }
+
+            //Es liegen keine Validerungsfehler vor, gebe das PersonalObject zurück
+            res.status(201).json({
+                "description" : "Daten erstellt", 
+                    "content" :{
+                        "application/json" : {
+                            "schema" : {
+                                "$ref" : personal
+                            }
+                        }
+                    }
+            })
+            return
+        }
+
+        
 
         //Speichern des zuvor erstellten Personal Objects
         const result = await daoPersonal.insert(personal)

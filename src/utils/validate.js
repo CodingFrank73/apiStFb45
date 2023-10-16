@@ -1,6 +1,5 @@
 
 function validateNewPersonal(personalObj){
-    let isValid = true
     const {einrichtungId,
         aktenzeichen,
         vorname,
@@ -12,29 +11,60 @@ function validateNewPersonal(personalObj){
         beschaeftigungsart,
         beschaeftigungsbeginn,
         fuehrungszeugnisLiegtVor,
-        fuehrungszeugnisMitEintrag
+        fuehrungszeugnisMitEintrag,
+        warnings
         } = personalObj
 
         if(typeof aktenzeichen !== "string" || aktenzeichen.trim().length === 0){
-            return isValid = false
+            let error = {"code":3}
+            return {error}
         }    
 
         if(typeof vorname !== "string" || vorname.trim().length === 0){
-            return isValid = false
+            let error = {"code":3}
+            return {error}
         }
 
         if(typeof nachname !== "string" || nachname.trim().length === 0){
-            return isValid = false
+            let error = {"code":3}
+            return {error}
         }
 
         if(typeof geburtstag !== "string" || geburtstag.trim().length === 0){
-            return isValid = false
+            let error = {"code":3}
+            return {error}
         }
 
-        return isValid
+        return {}
 
 }
 
+function validateAusbildungen(){
+
+    // let error ={"code":3, "message":"Problem mit Vorname", "schuesselAId":"", "schuesselBId":"", "von":"", "bis":""}
+    //         warnings.push(error)
+    //         return {"isValid":false, "content":personalObj}
+}
+
+function addWarningsToPersonalObj(personalObj){
+    const {einrichtungId,
+        aktenzeichen,
+        vorname,
+        nachname,
+        geburtsname,
+        geburtstag,
+        geschlecht,
+        staatsangehoerigkeitId,
+        beschaeftigungsart,
+        beschaeftigungsbeginn,
+        fuehrungszeugnisLiegtVor,
+        fuehrungszeugnisMitEintrag,
+        warnings
+        } = personalObj
+}
+
 module.exports={
-    validateNewPersonal
+    validateNewPersonal,
+    validateAusbildungen,
+    addWarningsToPersonalObj
 }
