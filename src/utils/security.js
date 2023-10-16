@@ -16,10 +16,16 @@ function createToken(user, type = "access", lifetimeInSeconds = Number(process.e
     return token
 }
 
-function isTokenExpired(token){
+function isTokenExpired(token) {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
 
-     
+    if (payload.exp > Math.floor(Date.now() / 1000)) {
+        console.log("Abgelaufen");
+    } else {
+        console.log("gültig");
+    }
+
+
 }
 
 module.exports = {

@@ -11,6 +11,7 @@ const {
 const { detailsEinrichtungAction } = require("../controllers/einrichtungController");
 const { indexStaatAction, detailsStaatAction } = require("../controllers/staatController");
 const { getJWT } = require("../controllers/jwtController")
+const { doAuthMiddleware } = require("../utils/auth-middleware")
 
 const apiRouter = express.Router();
 
@@ -18,7 +19,7 @@ const apiRouter = express.Router();
 apiRouter.get('/jwt/', getJWT)
 apiRouter.get('/personal', getPersonalID)
 apiRouter.get('/personal/id', getPersonalByID)
-apiRouter.post('/personal/', insertPersonalAction)
+apiRouter.post('/personal/', doAuthMiddleware, insertPersonalAction)
 
 apiRouter.get('/einrichtung/', detailsEinrichtungAction)
 

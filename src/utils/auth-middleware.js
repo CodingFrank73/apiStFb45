@@ -25,10 +25,21 @@ function doAuthMiddleware(req, res, next) {
     try {
         const tokenPayload = jwt.verify(token, process.env.JWT_SECRET)
 
-        const isAccessToken = tokenPayload.type === "access";
-        if (!isAccessToken) {
-            return _pleaseLoginFirst();
+        //const payload = jwt.verify(token, process.env.JWT_SECRET)
+
+        if (tokenPayload.exp > Math.floor(Date.now() / 1000)) {
+            console.log("Abgelaufen");
+        } else {
+            console.log("gültig");
         }
+
+
+
+
+        /*  const isAccessToken = tokenPayload.type === "access";
+         if (!isAccessToken) {
+             return _pleaseLoginFirst();
+         } */
 
         req.userClaims = tokenPayload;
         next();
