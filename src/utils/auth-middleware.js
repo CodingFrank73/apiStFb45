@@ -2,17 +2,18 @@ const jwt = require("jsonwebtoken");
 
 function doAuthMiddleware(req, res, next) {
     const _pleaseLoginFirst = () => res.status(401).json({ message: "Please login..." })
+    const _tokenExpired = () => res.status(401).json({message: "Das JSON Web Token fehlt oder ist ungültig"})
 
-    const tokenField = req.headers.token;
+    const tokenField = req.headers.authorization
 
     if (!tokenField) {
         return _pleaseLoginFirst()
     }
 
     const tokenFieldParts = tokenField.split(" ");
-    const token = tokenFieldParts[1];
-
-    const isJwtToken = tokenFieldParts[0] === "JWT";
+    const token = tokenFieldParts[1].replaceAll('"','')
+    
+    const isJwtToken = tokenFieldParts[0] === "Bearer";
     if (!isJwtToken) {
         return _pleaseLoginFirst();
     }
@@ -25,21 +26,13 @@ function doAuthMiddleware(req, res, next) {
     try {
         const tokenPayload = jwt.verify(token, process.env.JWT_SECRET)
 
-        //const payload = jwt.verify(token, process.env.JWT_SECRET)
-
-        if (tokenPayload.exp > Math.floor(Date.now() / 1000)) {
-            console.log("Abgelaufen");
-        } else {
-            console.log("gültig");
+        if (tokenPayload.exp < Math.floor(Date.now() / 1000)){
+            console.log ("Expire: ", tokenPayload.exp)
+            console.log ("Now: ", Math.floor(Date.now() / 1000))
+            console.log (token)
+           // res.status(401).json({message: "Token expired"})
+            return _tokenExpired()
         }
-
-
-
-
-        /*  const isAccessToken = tokenPayload.type === "access";
-         if (!isAccessToken) {
-             return _pleaseLoginFirst();
-         } */
 
         req.userClaims = tokenPayload;
         next();

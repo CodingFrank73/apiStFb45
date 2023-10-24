@@ -2,7 +2,7 @@ const express = require("express");
 
 const {
     getPersonalByID,
-    updatePerson,
+    updatePersonalAction,
     insertPersonalAction,
     getPersons,
     getPersonalID
@@ -19,6 +19,7 @@ const apiRouter = express.Router();
 apiRouter.get('/jwt/', getJWT)
 apiRouter.get('/personal', getPersonalID)
 apiRouter.get('/personal/id', getPersonalByID)
+apiRouter.put('/personal/', updatePersonalAction)
 apiRouter.post('/personal/', doAuthMiddleware, insertPersonalAction)
 
 apiRouter.get('/einrichtung/', detailsEinrichtungAction)

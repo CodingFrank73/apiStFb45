@@ -56,13 +56,14 @@ const getPersonalByID = async (req, res) => {
     }
 }
 
-const updatePerson = async (req, res) => {
-    const { userId, dateOfBirth, ...updatedInfo } = req.body
-
-    updatedInfo.dateOfBirth = new Date(dateOfBirth)
+const updatePersonalAction = async (req, res) => {
+    const { synchronisieren, ...updatedInfo } = req.body
+    const _id = req.query.id // <-- Entspricht der KiBiz-Personal-ID im Access-Frontend 
+    
+    console.log(updatedInfo)
 
     try {
-        const insertResult = await daoPersonen.update(userId, updatedInfo);
+        const insertResult = await daoPersonal.update(_id, updatedInfo);
 
         const wasSuccessful = insertResult.acknowledged === true && insertResult.modifiedCount
         if (!wasSuccessful) {
@@ -113,17 +114,9 @@ const insertPersonalAction = async (req, res) => {
 
         //Vorprüfung: Im ersten Schritt, d.h. wenn die Eigenschaft 'synchronisieren' === 'nein' ist.
         //Prüfe ob die im Body übermittelten Werte valide sind.
-        //Wenn NEIN gebe einer Validierungfehler, ansonsten ein Ok als Response zurück, und beende Function.
+        //Wenn NEIN gebe einen Validierungfehler, ansonsten ein Ok, als Response zurück und beende Function.
 
         if (synchronisieren !=="ja"){
-
-            console.log(req.headers.authorization)
-
-           //Ist JWt gültig. Wenn Nein beende sofort mit Status 401
-            // const tokenPayload = req.session.
-
-
-            
             //Prüfe ob Validierungsfehler vorliegen
             const personalErrorObj = await validateNewPersonal(personal)
 
@@ -155,8 +148,6 @@ const insertPersonalAction = async (req, res) => {
             return
         }
 
-        
-
         //Speichern des zuvor erstellten Personal Objects
         const result = await daoPersonal.insert(personal)
 
@@ -172,7 +163,17 @@ const insertPersonalAction = async (req, res) => {
         //und gebe es als Response zurück
         const newPersonal = await daoPersonal.findByObjectId(result.insertedId)
 
-        res.status(201).json({discription : "Daten erstellt", content: newPersonal})
+        res.status(201).json({
+            "discription" : "Daten erstellt",
+            "content" : {
+                "application/json" :{
+                    "schema" :{
+                        "$ref": newPersonal
+                    }
+                    
+                }
+            }
+            })
 
     } catch (error) {
         res.status(500).json({ error: error.message || "Unknown error while registering new user." })
@@ -184,6 +185,6 @@ module.exports = {
     getPersons,
     getPersonalID,
     getPersonalByID,
-    updatePerson,
+    updatePersonalAction,
     insertPersonalAction
 }
